@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Master's Lockpick</title>
+<style>
+  :root{
+    --bg:#15110d; --panel:#1f1813; --panel2:#28201a; --panel3:#322820; --line:#3a2e23;
+    --txt:#e8ddcd; --muted:#a08e76; --accent:#d9a441; --accent2:#7fb069;
+    --pin:#e0531f; --bad:#b3402f;
+    --pinoff:#e6b23c; --pinon:#cf3b22;   /* board pins: off = gold, in place = red */
+    --hole:clamp(30px, 8.6vw, 42px);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:radial-gradient(circle at 30% -10%,#241c14,#15110d 70%);color:var(--txt);
+    min-height:100vh;font-size:16px;line-height:1.4}
+  .wrap{max-width:680px;margin:0 auto;padding:16px 14px 110px}
+  h1{font-size:21px;margin:0 0 14px;letter-spacing:.3px}
+  h1 .em{color:var(--accent)}
+  /* hero header banner */
+  .hero{position:relative;border-radius:14px;overflow:hidden;margin:0 0 18px;border:1px solid var(--line);
+    height:clamp(120px,34vw,190px)}
+  .hero img{width:100%;height:100%;object-fit:cover;object-position:center 40%;display:block}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(to top,rgba(21,17,13,.96) 2%,rgba(21,17,13,.4) 48%,rgba(21,17,13,.05) 100%)}
+  .hero h1{position:absolute;left:16px;right:16px;bottom:12px;margin:0;z-index:2;font-size:25px;
+    letter-spacing:.4px;text-shadow:0 2px 14px rgba(0,0,0,.85)}
+  .sub{color:var(--muted);font-size:13.5px;margin:0 0 16px;line-height:1.55}
+
+  /* wizard progress */
+  .steps-bar{display:flex;gap:8px;margin:0 0 16px}
+  .sdot{flex:1;height:5px;border-radius:3px;background:var(--panel3)}
+  .sdot.on{background:var(--accent)}
+  .stage-title{font-size:12px;text-transform:uppercase;letter-spacing:1.3px;color:var(--accent);margin:0 0 4px}
+  .stage-h{font-size:19px;font-weight:700;margin:0 0 14px}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:14px}
+  .card h2{font-size:12px;text-transform:uppercase;letter-spacing:1.2px;color:var(--accent);margin:0 0 12px}
+  label{font-size:14px;color:var(--muted)}
+
+  button{cursor:pointer;font-family:inherit;font-size:15px}
+  .btn{background:var(--accent);color:#1a1206;border:none;border-radius:10px;padding:14px 18px;font-weight:700;letter-spacing:.3px}
+  .btn:active{filter:brightness(.92)}
+  .btn.ghost{background:var(--panel3);color:var(--txt);border:1px solid var(--line);font-weight:600}
+  .btn.block{display:block;width:100%}
+  .btn:disabled{opacity:.35}
+  .toolbar{display:flex;flex-direction:column;gap:9px}
+  .navrow{display:flex;gap:10px}
+  .navrow .btn{flex:1}
+
+  .stepper{display:flex;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:10px;overflow:hidden;width:max-content}
+  .stepper button{width:48px;height:48px;background:transparent;border:none;color:var(--accent);font-size:25px;font-weight:700}
+  .stepper button:active{background:var(--panel3)}
+  .stepper .val{min-width:54px;text-align:center;font-size:21px;font-weight:700}
+  .field-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+
+  /* lock board */
+  .board{display:flex;flex-direction:column;gap:8px}
+  .prow{display:flex;align-items:center;gap:10px;padding:3px 4px;border-radius:9px;min-height:48px}
+  .prow.moved{background:rgba(217,164,65,.10)}
+  /* moving-row emphasis on the solution board */
+  .prow.driver{background:rgba(217,164,65,.18);box-shadow:inset 3px 0 0 var(--accent)}
+  .prow.pulled{background:rgba(217,164,65,.07);box-shadow:inset 3px 0 0 rgba(217,164,65,.45)}
+  .prow.driver .hole.pin,.prow.pulled .hole.pin{box-shadow:0 0 12px rgba(230,178,60,.75)}
+  .prow .tag{width:48px;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:4px;
+    font-size:13px;color:var(--muted);font-weight:600;text-align:right}
+  .prow.moved .tag,.prow.driver .tag,.prow.pulled .tag{color:var(--accent);font-weight:800}
+  /* direction chip */
+  .dir-chip{font-size:11px;font-weight:800;padding:2px 7px;border-radius:20px;white-space:nowrap;line-height:1.5}
+  .dir-chip.drv{background:var(--accent);color:#1a1206}
+  .dir-chip.flw{background:transparent;border:1px solid var(--accent);color:var(--accent);font-weight:700}
+  /* ghost of previous position + motion trail */
+  .ghost-mark{width:62%;height:62%;border-radius:50%;background:rgba(230,178,60,.20);
+    border:1.5px dashed rgba(230,178,60,.55)}
+  .trail-mark{color:rgba(217,164,65,.5);font-size:15px;font-weight:800;line-height:1}
+  .ghostdot{background:rgba(230,178,60,.20)!important;border:1px dashed rgba(230,178,60,.6)}
+  .holes{display:flex;gap:clamp(4px,1.4vw,8px);flex:1;justify-content:space-between}
+  .hole{width:var(--hole);height:var(--hole);border-radius:50%;border:2px solid var(--line);background:#0e0b08;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;transition:transform .05s}
+  .hole.target{border-color:var(--accent2)}
+  .hole.target::after{content:"";width:5px;height:5px;border-radius:50%;background:rgba(127,176,105,.4)}
+  .hole.pin{background:var(--pinoff);border-color:#f4cd61;box-shadow:0 0 8px rgba(230,178,60,.5)}
+  .hole.pin::after{display:none}
+  .hole.pin.done{background:var(--pinon);border-color:#e96a52;box-shadow:0 0 9px rgba(207,59,34,.6)}
+  .hole.tappable:active{transform:scale(.86)}
+  .free-pill{font-size:11px;color:var(--accent2);padding:2px 9px;border:1px solid var(--accent2);border-radius:20px;white-space:nowrap}
+
+  /* coupling cards — progressive disclosure */
+  .ccard{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:12px;margin-bottom:10px}
+  .ccard .chead{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+  .ccard .cname{font-size:15px;font-weight:700}
+  .ccard .cname b{color:var(--accent)}
+  .ccard .free-note{font-size:12.5px;color:var(--muted);font-style:italic}
+  .link-row{display:flex;align-items:center;gap:8px;background:#0e0b08;border:1px solid var(--line);
+    border-radius:10px;padding:8px 8px 8px 12px;margin-bottom:8px;flex-wrap:wrap}
+  .link-row .ll{font-size:14px;font-weight:700;color:var(--txt)}
+  .seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-left:2px}
+  .seg button{padding:0 12px;min-height:44px;background:transparent;border:none;color:var(--muted);font-size:13px;font-weight:600;white-space:nowrap}
+  .seg button.on.same{background:rgba(127,176,105,.16);color:var(--accent2)}
+  .seg button.on.opp{background:rgba(224,83,31,.16);color:var(--pin)}
+  .rm{margin-left:auto;min-width:44px;height:44px;border-radius:9px;background:var(--panel3);border:1px solid var(--line);color:var(--muted);font-size:17px}
+  .rm:active{background:#3c2f24}
+  .add-btn{width:100%;min-height:46px;background:transparent;border:1.5px dashed var(--line);color:var(--accent);
+    border-radius:10px;padding:11px;font-weight:600;font-size:14px}
+  .add-btn:active{background:rgba(217,164,65,.08)}
+  .add-picker{border:1px dashed var(--accent);border-radius:10px;padding:10px;background:rgba(217,164,65,.05)}
+  .add-picker .pl{font-size:12px;color:var(--muted);margin:0 0 8px}
+  .add-chips{display:flex;flex-wrap:wrap;gap:8px}
+  .add-chip{min-height:44px;min-width:54px;border:1.5px solid var(--accent);background:rgba(217,164,65,.1);color:var(--accent);
+    border-radius:9px;padding:0 14px;font-size:15px;font-weight:700;display:flex;align-items:center;gap:5px;justify-content:center}
+  .add-chip:active{transform:scale(.95)}
+  .add-done{margin-top:9px;min-height:42px;background:var(--panel3);border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:0 16px;font-size:13px;font-weight:600}
+  .legend-line{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.8}
+  .kbd{display:inline-block;padding:1px 7px;border:1px solid var(--line);border-radius:5px;margin:0 1px}
+
+  /* solution player */
+  .player-meta{font-size:13px;color:var(--muted);margin:0 0 4px}
+  .player-meta b{color:var(--accent);font-size:18px}
+  .pcount{font-size:13px;color:var(--muted);text-align:center;margin:0 0 8px}
+  /* solution progress bar (one segment per move, tappable) */
+  .pbar{display:flex;gap:5px;margin:0 0 14px;flex-wrap:wrap}
+  .pseg{flex:1 1 0;min-width:14px;height:22px;display:flex;align-items:center;background:transparent;border:none;padding:0}
+  .pseg::before{content:"";display:block;width:100%;height:6px;border-radius:3px;background:var(--panel3);transition:background .15s}
+  .pseg.done::before{background:var(--accent)}
+  .pseg.cur::before{background:var(--accent2);box-shadow:0 0 8px rgba(127,176,105,.55)}
+  .move-box{background:var(--panel2);border:1px solid var(--line);border-left:4px solid var(--accent);
+    border-radius:0 12px 12px 0;padding:13px 15px;margin-bottom:16px;min-height:64px}
+  .move-box.start{border-left-color:var(--muted)}
+  .move-title{font-size:17px;font-weight:700;margin:0 0 5px}
+  .move-title .arrow{color:var(--accent)}
+  .move-drag{font-size:13px;color:var(--muted);line-height:1.5}
+  .solved-badge{background:rgba(127,176,105,.12);border:1px solid var(--accent2);color:var(--accent2);
+    border-radius:10px;padding:11px 14px;font-size:15px;font-weight:600;text-align:center;margin-top:14px}
+  .pnav{position:sticky;bottom:0;display:flex;gap:10px;padding:10px 0 4px;
+    background:linear-gradient(to top,var(--bg) 72%,transparent)}
+  .pnav .btn{flex:1;padding:15px}
+  .legend{font-size:12px;color:var(--muted);line-height:1.8;margin-top:14px}
+  .dot{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-1px;margin:0 3px 0 10px}
+  .err{color:var(--bad);font-size:14.5px;line-height:1.6;margin-top:12px}
+
+  .screen{display:none}
+  .screen.active{display:block;animation:fade .18s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <img src="b479fc242e7d2536953ea2bc18d773649dd1c2010e6de4cc.avif" alt="">
+    <h1>Master's <span class="em">Lockpick</span></h1>
+  </header>
+
+  <!-- ===== SCREEN 1: plates + positions ===== -->
+  <section class="screen active" id="screen1">
+    <div class="steps-bar"><div class="sdot on"></div><div class="sdot"></div></div>
+    <p class="stage-title">Step 1 of 2</p>
+    <h2 class="stage-h">Plates &amp; pins</h2>
+    <p class="sub">Enter where the pins sit and how the plates are linked — you'll get a step-by-step solution to bring every pin to #4 and open the lock.</p>
+
+    <div class="card">
+      <h2>Number of plates</h2>
+      <div class="field-row">
+        <div class="stepper">
+          <button id="decN">−</button><span class="val" id="valN">3</span><button id="incN">+</button>
+        </div>
+        <span class="legend-line" id="warnN"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Where the pins are now</h2>
+      <p class="sub" style="margin:0 0 12px">Tap the hole that holds the pin on each plate. Green ring is the goal (#4). <b>P1 is at the bottom</b>.</p>
+      <div class="board" id="positions"></div>
+      <div class="toolbar" style="margin-top:14px">
+        <button class="btn ghost block" id="reset">Reset all to #4</button>
+        <button class="btn ghost block" id="randomize">Random positions</button>
+      </div>
+    </div>
+
+    <button class="btn block" id="toStep2">Next → links</button>
+  </section>
+
+  <!-- ===== SCREEN 2: couplings ===== -->
+  <section class="screen" id="screen2">
+    <div class="steps-bar"><div class="sdot on"></div><div class="sdot on"></div></div>
+    <p class="stage-title">Step 2 of 2</p>
+    <h2 class="stage-h">What moves each plate</h2>
+
+    <div class="card">
+      <p class="sub" style="margin:0 0 12px">For each plate tap <b>“+ link”</b> and add the plates that move with it. Then pick the direction: <b>same way</b> or <b>opposite</b>.</p>
+      <div id="couplings"></div>
+      <div class="legend-line">
+        <span class="kbd" style="color:var(--accent2)">same way</span> — moves in the same direction &nbsp;·&nbsp;
+        <span class="kbd" style="color:var(--pin)">opposite</span> — moves the other way.<br>
+        A plate with no links is “free” and moves on its own.
+      </div>
+    </div>
+
+    <div id="solveError"></div>
+    <div class="navrow">
+      <button class="btn ghost" id="backTo1">← Back</button>
+      <button class="btn" id="doSolve">Solve</button>
+    </div>
+  </section>
+
+  <!-- ===== SCREEN 3: solution player ===== -->
+  <section class="screen" id="screen3">
+    <p class="player-meta" id="playerMeta"></p>
+    <p class="pcount" id="pcount"></p>
+    <div class="pbar" id="pbar"></div>
+    <div class="move-box" id="moveBox"></div>
+    <div class="board" id="playerBoard"></div>
+    <div id="solvedBadge"></div>
+    <div class="legend" id="playerLegend"></div>
+    <div class="pnav">
+      <button class="btn ghost" id="pPrev">← Back</button>
+      <button class="btn" id="pNext">Next →</button>
+    </div>
+    <button class="btn ghost block" id="restart" style="margin-top:10px">↩ Edit lock</button>
+  </section>
+</div>
+
+<script>
+const TARGET=4, HOLES=7;
+let N=3, positions=[], couplings=[];
+let sol=null, pIndex=0;   // solution player state
+
+function el(t,c,h){const e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e;}
+function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function initState(keep){
+  const op=positions.slice(), oc=couplings.map(r=>r.slice());
+  positions=[]; couplings=[];
+  for(let i=0;i<N;i++){
+    positions[i]=(keep&&op[i]!=null)?op[i]:TARGET;
+    couplings[i]=[];
+    if(keep&&oc[i]) for(const c of oc[i]) if(c.j<N) couplings[i].push({...c});
+  }
+}
+
+/* ---------- positions board (P1 bottom, tappable) ---------- */
+function renderPositions(){
+  const box=document.getElementById('positions'); box.innerHTML='';
+  for(let i=N-1;i>=0;i--){
+    const row=el('div','prow');
+    row.appendChild(el('span','tag','P'+(i+1)));
+    const holes=el('div','holes');
+    for(let h=1;h<=HOLES;h++){
+      const cls='hole tappable'+(h===TARGET?' target':'')+(positions[i]===h?' pin':'')+(positions[i]===h&&h===TARGET?' done':'');
+      const hole=el('div',cls);
+      hole.onclick=()=>{positions[i]=h; renderPositions();};
+      holes.appendChild(hole);
+    }
+    row.appendChild(holes);
+    box.appendChild(row);
+  }
+}
+
+/* ---------- coupling cards (progressive disclosure) ---------- */
+const addOpen=new Set();
+function setSign(i,j,sign){ const c=couplings[i].find(c=>c.j===j); if(c){c.sign=sign; renderCouplings();} }
+function addLink(i,j){ if(!couplings[i].some(c=>c.j===j)){ couplings[i].push({j,sign:1}); } renderCouplings(); }
+function removeLink(i,j){ couplings[i]=couplings[i].filter(c=>c.j!==j); renderCouplings(); }
+
+function renderCouplings(){
+  const box=document.getElementById('couplings'); box.innerHTML='';
+  for(let i=0;i<N;i++){
+    const card=el('div','ccard');
+    const head=el('div','chead');
+    head.appendChild(el('span','cname','Move <b>P'+(i+1)+'</b>'));
+    if(couplings[i].length===0 && !addOpen.has(i)) head.appendChild(el('span','free-pill','free'));
+    card.appendChild(head);
+
+    const links=couplings[i].slice().sort((a,b)=>a.j-b.j);
+    for(const c of links){
+      const row=el('div','link-row');
+      row.appendChild(el('span','ll','P'+(c.j+1)+' moves'));
+      const seg=el('div','seg');
+      const bSame=el('button','same'+(c.sign===1?' on':''),'→ same way');
+      const bOpp =el('button','opp'+(c.sign===-1?' on':''),'← opposite');
+      bSame.classList.toggle('on',c.sign===1); bOpp.classList.toggle('on',c.sign===-1);
+      bSame.onclick=()=>setSign(i,c.j,1); bOpp.onclick=()=>setSign(i,c.j,-1);
+      seg.appendChild(bSame); seg.appendChild(bOpp);
+      row.appendChild(seg);
+      const rm=el('button','rm','✕'); rm.onclick=()=>removeLink(i,c.j); row.appendChild(rm);
+      card.appendChild(row);
+    }
+
+    const available=[]; for(let j=0;j<N;j++) if(j!==i && !couplings[i].some(c=>c.j===j)) available.push(j);
+    if(available.length){
+      if(addOpen.has(i)){
+        const picker=el('div','add-picker');
+        picker.appendChild(el('p','pl','which plate moves together with P'+(i+1)+'?'));
+        const chips=el('div','add-chips');
+        for(const j of available){
+          const ch=el('button','add-chip','<span style="font-size:13px">+</span> P'+(j+1));
+          ch.onclick=()=>addLink(i,j);
+          chips.appendChild(ch);
+        }
+        picker.appendChild(chips);
+        const done=el('button','add-done','Done'); done.onclick=()=>{addOpen.delete(i); renderCouplings();};
+        picker.appendChild(done);
+        card.appendChild(picker);
+      }else{
+        const add=el('button','add-btn','+ link a plate');
+        add.onclick=()=>{addOpen.add(i); renderCouplings();};
+        card.appendChild(add);
+      }
+    }
+    if(couplings[i].length===0 && !addOpen.has(i))
+      card.appendChild(el('p','free-note','moves on its own, pulls nothing'));
+
+    box.appendChild(card);
+  }
+}
+
+/* ---------- solver (rigid coupling) ---------- */
+function maxMag(pos,i,s){
+  const travel=(p,d)=> d>0 ? (HOLES-p) : (p-1);
+  let D=travel(pos[i],s);
+  for(const c of couplings[i]){ const r=travel(pos[c.j],s*c.sign); if(r<D)D=r; }
+  return D;
+}
+function solve(){
+  const start=positions.slice(); const goal=Array(N).fill(TARGET).join(',');
+  if(start.join(',')===goal) return {path:[],status:'already'};
+  if(Math.pow(HOLES,N)>6_000_000) return {status:'toobig'};
+  const visited=new Set([start.join(',')]);
+  let frontier=[{pos:start,path:[]}], explored=0; const CAP=4_000_000;
+  while(frontier.length){
+    const next=[];
+    for(const node of frontier){
+      for(let i=0;i<N;i++){ for(const s of [1,-1]){
+        const D=maxMag(node.pos,i,s);
+        for(let mag=1;mag<=D;mag++){
+          const np=node.pos.slice(); np[i]=node.pos[i]+s*mag;
+          for(const c of couplings[i]) np[c.j]=node.pos[c.j]+s*c.sign*mag;
+          const key=np.join(',');
+          if(visited.has(key)) continue;
+          visited.add(key); explored++;
+          const path=node.path.concat([{plate:i,delta:s*mag}]);
+          if(key===goal) return {path,status:'ok'};
+          next.push({pos:np,path});
+          if(explored>CAP) return {status:'toobig'};
+        }
+      }}
+    }
+    frontier=next;
+  }
+  return {status:'unsolvable'};
+}
+
+/* ---------- describe + apply ---------- */
+function arrow(d){ return d>0?'→ right':'← left'; }
+function describeDrag(i,delta,before){
+  if(!couplings[i].length) return '';
+  const mag=Math.abs(delta);
+  return 'pulls '+couplings[i].map(c=>{
+    const d=delta*c.sign, to=before[c.j]+d, edge=(to===1||to===HOLES)?' (edge)':'';
+    return 'P'+(c.j+1)+' '+(d>0?'right':'left')+' by '+mag+edge;
+  }).join(', ');
+}
+function applyMove(pos,m){
+  const np=pos.slice(); np[m.plate]=pos[m.plate]+m.delta;
+  for(const c of couplings[m.plate]) np[c.j]=pos[c.j]+m.delta*c.sign;
+  return np;
+}
+
+/* ---------- big player board (P1 bottom) ---------- */
+function bigBoard(pos,meta){
+  const changed = meta ? meta.changed : null;
+  const before  = meta ? meta.before  : null;
+  const driver  = meta ? meta.m.plate : -1;
+  const b=el('div','board');
+  for(let i=N-1;i>=0;i--){
+    const isMoved  = !!(changed && changed.has(i));
+    const isDriver = i===driver;
+    const row=el('div','prow'+(isMoved?(isDriver?' driver':' pulled'):''));
+
+    const bHole = before ? before[i] : null;
+    const aHole = pos[i];
+    const dir   = (isMoved && bHole!=null) ? Math.sign(aHole-bHole) : 0;
+    const mag   = (isMoved && bHole!=null) ? Math.abs(aHole-bHole) : 0;
+
+    // left column: P-label + direction chip
+    const tag=el('div','tag');
+    tag.appendChild(el('span',null,'P'+(i+1)));
+    if(dir!==0) tag.appendChild(el('span','dir-chip '+(isDriver?'drv':'flw'),(dir>0?'→':'←')+mag));
+    row.appendChild(tag);
+
+    const holes=el('div','holes');
+    for(let h=1;h<=HOLES;h++){
+      const isPin=pos[i]===h, done=isPin&&h===TARGET;
+      const hole=el('div','hole'+(h===TARGET?' target':'')+(isPin?' pin':'')+(done?' done':''));
+      if(isMoved && bHole===h && h!==aHole){
+        hole.appendChild(el('span','ghost-mark'));               // previous position
+      }else if(dir!==0 && ((dir>0&&h>bHole&&h<aHole)||(dir<0&&h<bHole&&h>aHole))){
+        hole.appendChild(el('span','trail-mark',dir>0?'›':'‹')); // motion trail
+      }
+      holes.appendChild(hole);
+    }
+    row.appendChild(holes); b.appendChild(row);
+  }
+  return b;
+}
+
+/* ---------- run solve -> build solution states ---------- */
+function buildSolution(path){
+  const states=[positions.slice()], metas=[null];
+  let pos=positions.slice();
+  for(const m of path){
+    const before=pos.slice();
+    pos=applyMove(pos,m);
+    const changed=new Set([m.plate]);
+    for(const c of couplings[m.plate]) if(pos[c.j]!==before[c.j]) changed.add(c.j);
+    states.push(pos.slice()); metas.push({m,changed,before});
+  }
+  return {path,states,metas};
+}
+function plural(n){ return n===1?'move':'moves'; }
+function renderPlayer(){
+  const total=sol.path.length;
+  document.getElementById('playerMeta').innerHTML='Solution: <b>'+total+'</b> '+plural(total);
+  const meta=sol.metas[pIndex];
+  const box=document.getElementById('moveBox');
+  if(pIndex===0){
+    box.className='move-box start';
+    box.innerHTML='<div class="move-title">Start</div><div class="move-drag">Initial pin positions.</div>';
+    document.getElementById('pcount').textContent='Start';
+  }else{
+    box.className='move-box';
+    const m=meta.m;
+    let html='<div class="move-title">Plate '+(m.plate+1)+' <span class="arrow">'+arrow(m.delta)+' by '+Math.abs(m.delta)+'</span></div>';
+    const drag=describeDrag(m.plate,m.delta,meta.before);
+    if(drag) html+='<div class="move-drag">'+drag+'</div>';
+    box.innerHTML=html;
+    document.getElementById('pcount').textContent='Move '+pIndex+' of '+total;
+  }
+  const pbar=document.getElementById('pbar'); pbar.innerHTML='';
+  for(let k=1;k<=total;k++){
+    const seg=el('button','pseg'+(pIndex>=k?' done':'')+(pIndex===k?' cur':''));
+    seg.title='Move '+k+' of '+total;
+    seg.onclick=()=>{ pIndex=k; renderPlayer(); };
+    pbar.appendChild(seg);
+  }
+
+  const pb=document.getElementById('playerBoard'); pb.innerHTML='';
+  pb.appendChild(bigBoard(sol.states[pIndex], meta));
+
+  const solved=document.getElementById('solvedBadge');
+  solved.innerHTML = (pIndex===total) ? '<div class="solved-badge">✓ All pins at #4 — lock open!</div>' : '';
+
+  document.getElementById('playerLegend').innerHTML =
+    '<span class="dot" style="background:var(--pinoff)"></span>not in place'+
+    '<span class="dot" style="background:var(--pinon)"></span>at #4 · ring = goal'+
+    '<span class="dot ghostdot"></span>previous spot';
+
+  document.getElementById('pPrev').disabled = pIndex===0;
+  document.getElementById('pNext').disabled = pIndex===total;
+}
+
+function runSolve(){
+  const errBox=document.getElementById('solveError'); errBox.innerHTML='';
+  const res=solve();
+  if(res.status==='already'){ errBox.innerHTML='<p class="err" style="color:var(--accent2)">✓ All pins are already at #4 — lock open.</p>'; return; }
+  if(res.status==='unsolvable'){ errBox.innerHTML='<p class="err">✕ No solution: with these links the pins can’t all reach #4 without running past an edge. Check the links and directions.</p>'; return; }
+  if(res.status==='toobig'){ errBox.innerHTML='<p class="err">⚠ Too many plates for the step-by-step search. Keep it to 8 or fewer.</p>'; return; }
+  sol=buildSolution(res.path); pIndex=0; renderPlayer(); show('screen3');
+}
+
+/* ---------- controls ---------- */
+function setN(v){
+  v=Math.max(2,Math.min(8,v));
+  N=v; document.getElementById('valN').textContent=v;
+  document.getElementById('warnN').textContent = v>=8?'the search may take a couple of seconds':'';
+  initState(true); renderPositions(); renderCouplings();
+}
+document.getElementById('incN').onclick=()=>setN(N+1);
+document.getElementById('decN').onclick=()=>setN(N-1);
+document.getElementById('reset').onclick=()=>{ for(let i=0;i<N;i++)positions[i]=TARGET; renderPositions(); };
+document.getElementById('randomize').onclick=()=>{ for(let i=0;i<N;i++)positions[i]=1+Math.floor(Math.random()*HOLES); renderPositions(); };
+document.getElementById('toStep2').onclick=()=>{ renderCouplings(); show('screen2'); };
+document.getElementById('backTo1').onclick=()=>{ renderPositions(); show('screen1'); };
+document.getElementById('doSolve').onclick=runSolve;
+document.getElementById('pPrev').onclick=()=>{ if(pIndex>0){pIndex--; renderPlayer();} };
+document.getElementById('pNext').onclick=()=>{ if(sol&&pIndex<sol.path.length){pIndex++; renderPlayer();} };
+document.getElementById('restart').onclick=()=>{ document.getElementById('solveError').innerHTML=''; show('screen1'); };
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('screen3').classList.contains('active'))return;
+  if(e.key==='ArrowRight') document.getElementById('pNext').click();
+  if(e.key==='ArrowLeft') document.getElementById('pPrev').click();
+});
+
+/* init + small demo wiring */
+initState(false);
+if(N>=2) couplings[0].push({j:1,sign:1});
+positions[0]=2; positions[1]=6; if(N>=3) positions[2]=5;
+renderPositions(); renderCouplings();
+</script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="art.osetrov" data-description="Support me on Buy me a coffee!" data-message="" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body>
+</html>
