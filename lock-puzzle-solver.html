@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Master's Lockpick</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#15110d; --panel:#1f1813; --panel2:#28201a; --panel3:#322820; --line:#3a2e23;
@@ -174,6 +177,10 @@
   .pnav{position:sticky;bottom:0;display:flex;gap:10px;padding:10px 0 4px;
     background:linear-gradient(to top,var(--bg) 72%,transparent)}
   .pnav .btn{flex:1;padding:15px}
+  .bmc-btn{flex:1;padding:13px 15px;border-radius:10px;background:#FFDD00;color:#000;
+    font-family:'Cookie',cursive;font-size:23px;line-height:1;font-weight:400;text-align:center;
+    text-decoration:none;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,.15)}
+  .bmc-btn:active{filter:brightness(.94)}
   .legend{font-size:12px;color:var(--muted);line-height:1.8;margin-top:14px}
   .dot{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-1px;margin:0 3px 0 10px}
   .err{color:var(--bad);font-size:14.5px;line-height:1.6;margin-top:12px}
@@ -266,6 +273,7 @@
     <div class="pnav">
       <button class="btn ghost" id="pPrev">← Back</button>
       <button class="btn" id="pNext">Next →</button>
+      <a class="bmc-btn" id="bmcBtn" href="https://www.buymeacoffee.com/art.osetrov" target="_blank" rel="noopener" style="display:none">Buy me a coffee</a>
     </div>
     <button class="btn ghost block" id="restart" style="margin-top:10px">↩ Edit lock</button>
   </section>
@@ -539,7 +547,9 @@ function renderPlayer(){
     '<span class="dot ghostdot"></span>previous spot';
 
   document.getElementById('pPrev').disabled = pIndex===0;
-  document.getElementById('pNext').disabled = pIndex===total;
+  const isSolved = pIndex===total;
+  document.getElementById('pNext').style.display = isSolved ? 'none' : '';
+  document.getElementById('bmcBtn').style.display = isSolved ? 'flex' : 'none';
 }
 
 function runSolve(){
