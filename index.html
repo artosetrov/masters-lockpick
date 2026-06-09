@@ -4,9 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Master's Lockpick</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#15110d; --panel:#1f1813; --panel2:#28201a; --panel3:#322820; --line:#3a2e23;
@@ -89,7 +86,20 @@
     border:1.5px dashed rgba(230,178,60,.55)}
   .trail-mark{color:rgba(217,164,65,.5);font-size:15px;font-weight:800;line-height:1}
   .ghostdot{background:rgba(230,178,60,.20)!important;border:1px dashed rgba(230,178,60,.6)}
-  .holes{display:flex;gap:clamp(4px,1.4vw,8px);flex:1;justify-content:space-between}
+  .holes{display:flex;gap:clamp(4px,1.4vw,8px);flex:1;justify-content:space-between;position:relative}
+  /* animated sliding pin on the solution board */
+  .pin-token{position:absolute;top:50%;width:var(--hole);height:var(--hole);border-radius:50%;
+    transform:translateY(-50%);z-index:4;pointer-events:none;left:var(--to);
+    animation:pinslide 1.8s ease-in-out infinite}
+  .pin-token.gold{background:var(--pinoff);border:2px solid #f4cd61;box-shadow:0 0 8px rgba(230,178,60,.55)}
+  .pin-token.red{background:var(--pinon);border:2px solid #e96a52;box-shadow:0 0 10px rgba(207,59,34,.6)}
+  @keyframes pinslide{
+    0%{left:var(--from);opacity:0}
+    10%{left:var(--from);opacity:1}
+    55%{left:var(--to);opacity:1}
+    84%{left:var(--to);opacity:1}
+    100%{left:var(--to);opacity:0}}
+  @media (prefers-reduced-motion:reduce){.pin-token{animation:none;left:var(--to);opacity:1}}
   .hole{width:var(--hole);height:var(--hole);border-radius:50%;border:2px solid var(--line);background:#0e0b08;
     display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;transition:transform .05s}
   .hole.target{border-color:var(--accent2)}
@@ -177,10 +187,10 @@
   .pnav{position:sticky;bottom:0;display:flex;gap:10px;padding:10px 0 4px;
     background:linear-gradient(to top,var(--bg) 72%,transparent)}
   .pnav .btn{flex:1;padding:15px}
-  .bmc-btn{flex:1;padding:13px 15px;border-radius:10px;background:#FFDD00;color:#000;
-    font-family:'Cookie',cursive;font-size:23px;line-height:1;font-weight:400;text-align:center;
-    text-decoration:none;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,.15)}
-  .bmc-btn:active{filter:brightness(.94)}
+  .bmc-btn{flex:1;padding:15px;border-radius:10px;background:var(--accent);color:#1a1206;
+    font-family:inherit;font-size:15px;font-weight:700;letter-spacing:.3px;text-align:center;
+    text-decoration:none;display:flex;align-items:center;justify-content:center;gap:7px}
+  .bmc-btn:active{filter:brightness(.92)}
   .legend{font-size:12px;color:var(--muted);line-height:1.8;margin-top:14px}
   .dot{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-1px;margin:0 3px 0 10px}
   .err{color:var(--bad);font-size:14.5px;line-height:1.6;margin-top:12px}
@@ -467,17 +477,25 @@ function bigBoard(pos,meta){
     if(dir!==0) tag.appendChild(el('span','dir-chip '+(isDriver?'drv':'flw'),(dir>0?'→':'←')+mag));
     row.appendChild(tag);
 
+    const moving = isMoved && bHole!=null && bHole!==aHole;   // this plate's pin slides
     const holes=el('div','holes');
     for(let h=1;h<=HOLES;h++){
       const isPin=pos[i]===h, done=isPin&&h===TARGET;
-      const hole=el('div','hole'+(h===TARGET?' target':'')+(isPin?' pin':'')+(done?' done':''));
-      if(isMoved && bHole===h && h!==aHole){
+      const showPin = isPin && !moving;                        // moving pin is drawn as a token below
+      const hole=el('div','hole'+(h===TARGET?' target':'')+(showPin?' pin':'')+(showPin&&done?' done':''));
+      if(moving && bHole===h){
         hole.appendChild(el('span','ghost-mark'));               // previous position
       }else if(dir!==0 && ((dir>0&&h>bHole&&h<aHole)||(dir<0&&h<bHole&&h>aHole))){
         hole.appendChild(el('span','trail-mark',dir>0?'›':'‹')); // motion trail
       }
       maybeKey(hole,i,h);
       holes.appendChild(hole);
+    }
+    if(moving){
+      const tok=el('div','pin-token '+(aHole===TARGET?'red':'gold'));
+      tok.style.setProperty('--from','calc((100% - var(--hole)) * '+(bHole-1)+' / 6)');
+      tok.style.setProperty('--to','calc((100% - var(--hole)) * '+(aHole-1)+' / 6)');
+      holes.appendChild(tok);
     }
     row.appendChild(holes); b.appendChild(row);
   }
