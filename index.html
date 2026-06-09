@@ -3,7 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Master's Lockpick</title>
+
+<title>Gothic Remake Hacking Locks – Lockpicking Guide &amp; Chest Solver</title>
+<meta name="description" content="Stuck on Gothic Remake hacking locks? Use our free lockpicking guide and chest solver to crack any lock combination step by step and open every locked chest.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#15110d">
+<link rel="canonical" href="https://masters-lockpick.vercel.app/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Master's Lockpick">
+<meta property="og:title" content="Gothic Remake Hacking Locks – Lockpicking Guide &amp; Chest Solver">
+<meta property="og:description" content="Free Gothic Remake lockpicking guide and chest solver. Enter the lock and get a step-by-step solution to open any locked chest.">
+<meta property="og:url" content="https://masters-lockpick.vercel.app/">
+<meta property="og:image" content="https://masters-lockpick.vercel.app/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Gothic Remake hacking locks chest minigame with plates, pins and a key">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Gothic Remake Hacking Locks – Lockpicking Guide &amp; Chest Solver">
+<meta name="twitter:description" content="Free Gothic Remake lockpicking guide and chest solver. Enter the lock and get a step-by-step solution to open any locked chest.">
+<meta name="twitter:image" content="https://masters-lockpick.vercel.app/og-image.jpg">
+<meta name="twitter:image:alt" content="Gothic Remake hacking locks chest minigame with plates, pins and a key">
 <style>
   :root{
     --bg:#15110d; --panel:#1f1813; --panel2:#28201a; --panel3:#322820; --line:#3a2e23;
@@ -26,8 +49,11 @@
   .hero img{width:100%;height:100%;object-fit:cover;object-position:center 40%;display:block}
   .hero::after{content:"";position:absolute;inset:0;pointer-events:none;
     background:linear-gradient(to top,rgba(21,17,13,.96) 2%,rgba(21,17,13,.4) 48%,rgba(21,17,13,.05) 100%)}
-  .hero h1{position:absolute;left:16px;right:16px;bottom:12px;margin:0;z-index:2;font-size:25px;
+  .hero h1{position:absolute;left:16px;right:16px;bottom:12px;margin:0;z-index:2;
     letter-spacing:.4px;text-shadow:0 2px 14px rgba(0,0,0,.85)}
+  .hero h1 .brand{display:block;font-size:25px;line-height:1.1}
+  .hero h1 .h1-kw{display:block;margin-top:5px;font-size:12.5px;font-weight:600;color:var(--muted);
+    letter-spacing:.2px;text-transform:none}
   .sub{color:var(--muted);font-size:13.5px;margin:0 0 16px;line-height:1.55}
 
   /* wizard progress */
@@ -194,6 +220,23 @@
   .legend{font-size:12px;color:var(--muted);line-height:1.8;margin-top:14px}
   .dot{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-1px;margin:0 3px 0 10px}
   .err{color:var(--bad);font-size:14.5px;line-height:1.6;margin-top:12px}
+  /* SEO guide content */
+  .crumbs{font-size:12px;color:var(--muted);margin:28px 0 14px}
+  .crumbs a{color:var(--accent);text-decoration:none}
+  .guide{line-height:1.65}
+  .guide section{margin-bottom:6px}
+  .guide h2{font-size:19px;color:var(--txt);margin:24px 0 10px;font-weight:700}
+  .guide h3{font-size:15px;color:var(--accent);margin:16px 0 6px;font-weight:700}
+  .guide p{margin:0 0 12px;font-size:14.5px;color:var(--muted)}
+  .guide ul,.guide ol{margin:0 0 14px;padding-left:20px;font-size:14.5px;color:var(--muted)}
+  .guide li{margin:6px 0;line-height:1.55}
+  .guide strong{color:var(--txt);font-weight:700}
+  .guide em{color:var(--accent);font-style:normal;font-weight:600}
+  .guide a{color:var(--accent)}
+  .guide .toc{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin:0 0 8px}
+  .guide .toc strong{display:block;font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:var(--accent);margin-bottom:8px}
+  .guide .toc a{display:inline-block;margin:3px 12px 3px 0;font-size:13.5px;text-decoration:none}
+  .guide-jump{margin-top:18px;font-size:14px}
   .credit{text-align:center;font-size:12.5px;color:var(--muted);margin:26px 0 0;padding-top:16px;border-top:1px solid var(--line)}
   .credit a{color:var(--accent);text-decoration:none}
   .credit a:hover{text-decoration:underline}
@@ -206,8 +249,9 @@
 <body>
 <div class="wrap">
   <header class="hero">
-    <img src="b479fc242e7d2536953ea2bc18d773649dd1c2010e6de4cc.avif" alt="">
-    <h1>Master's <span class="em">Lockpick</span></h1>
+    <img src="gothic-remake-hacking-locks.avif" width="1200" height="630" decoding="async" fetchpriority="high"
+         alt="Gothic Remake hacking locks chest minigame showing lock plates, pins and an inserted key">
+    <h1><span class="brand">Master's <span class="em">Lockpick</span></span><span class="h1-kw">Gothic Remake Hacking Locks — lockpicking guide &amp; chest solver</span></h1>
   </header>
 
   <!-- ===== SCREEN 1: plates + positions ===== -->
@@ -287,6 +331,88 @@
     </div>
     <button class="btn ghost block" id="restart" style="margin-top:10px">↩ Edit lock</button>
   </section>
+
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a href="https://masters-lockpick.vercel.app/">Home</a> › <span>Gothic Remake</span> › <span aria-current="page">Hacking Locks</span>
+  </nav>
+
+  <article class="guide">
+    <nav class="toc" aria-label="On this page">
+      <strong>On this page</strong>
+      <a href="#what-is">What it is</a>
+      <a href="#how-it-works">How lockpicking works</a>
+      <a href="#how-to">Step by step</a>
+      <a href="#tips">Tips</a>
+      <a href="#mistakes">Common mistakes</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <section id="what-is">
+      <h2>What is Hacking Locks in Gothic Remake?</h2>
+      <p>In the Gothic Remake, <strong>hacking locks</strong> is the chest-lockpicking minigame you meet whenever you find a locked chest or door without its key. Instead of a single tumbler, each lock is a stack of metal plates, and every plate holds a pin you must slide into the correct hole. When all pins line up on the goal hole (#4), the lock clicks open. This page is both a quick <strong>Gothic Remake lockpicking guide</strong> and a free solver — set up your lock at the top and it shows the exact moves.</p>
+    </section>
+
+    <section id="how-it-works">
+      <h2>How lockpicking works in Gothic Remake</h2>
+      <p>Understanding the mechanics makes <strong>Gothic Remake lockpicking</strong> far less frustrating. Three things matter:</p>
+      <h3>Plates and pins</h3>
+      <p>Each lock has several plates (rows). On every plate a pin starts in some hole, and your goal is to bring all pins to the same target hole. Move a plate left or right to shift its pin.</p>
+      <h3>Linked plates</h3>
+      <p>Some plates are coupled: moving one also moves another, either the same way or the opposite way. These links are what make <strong>Gothic Remake lock combinations</strong> tricky — fixing one pin can knock another out of place.</p>
+      <h3>Lockpick durability</h3>
+      <p>Lockpicks wear out and snap. Untrained you get very few attempts per pick; training the skill gives more durability and forgiving feedback, so invest points early if you plan to open a lot of <strong>Gothic Remake locked chests</strong>.</p>
+    </section>
+
+    <section id="how-to">
+      <h2>How to hack locks in Gothic Remake (step by step)</h2>
+      <p>The fastest way to learn <strong>how to hack locks in Gothic Remake</strong> is to use the solver above:</p>
+      <ol>
+        <li>Pick the number of plates your chest shows.</li>
+        <li>Tap each plate to mark where its pin currently sits.</li>
+        <li>Add which plates move together, and whether they go the same way or the opposite way.</li>
+        <li>Press <em>Solve</em> — you get a step-by-step solution that brings every pin to the goal and opens the lock.</li>
+      </ol>
+    </section>
+
+    <section id="tips">
+      <h2>Tips for opening locked chests</h2>
+      <ul>
+        <li>Train the lockpicking skill before tackling high-value <strong>Gothic Remake locked chests</strong>.</li>
+        <li>Work the most constrained pin first — the one closest to an edge has the least room to move.</li>
+        <li>Note the linked plates before you move anything; a single wrong direction can undo your progress.</li>
+        <li>Carry spare lockpicks; even with the right combination, a slip can cost a pick.</li>
+        <li>Use the solver to confirm a combination is actually reachable before brute-forcing a chest.</li>
+      </ul>
+    </section>
+
+    <section id="mistakes">
+      <h2>Common mistakes</h2>
+      <ul>
+        <li>Ignoring couplings and treating every plate as independent.</li>
+        <li>Pushing a pin past the edge of the lock, which simply wastes a move.</li>
+        <li>Attempting hard chests untrained and burning through your whole lockpick stock.</li>
+        <li>Forgetting that an “opposite” link moves the partner plate the other direction.</li>
+      </ul>
+    </section>
+
+    <section id="faq">
+      <h2>Frequently asked questions</h2>
+      <h3>What is hacking locks in Gothic Remake?</h3>
+      <p>It is the chest lockpicking minigame where you align every plate's pin on the goal hole to open a locked chest or door.</p>
+      <h3>How does lockpicking work in Gothic Remake?</h3>
+      <p>You move plates left or right to shift their pins. Some plates are linked and move together, so you must account for those couplings to reach the solution.</p>
+      <h3>How do I open locked chests in Gothic Remake without the key?</h3>
+      <p>Use lockpicks and the lockpicking skill. Enter the chest's layout in the solver above to get the exact sequence of moves that opens it.</p>
+      <h3>Are there fixed lock combinations in Gothic Remake?</h3>
+      <p>Each chest has its own starting layout and links, so the Gothic Remake lock combinations vary. The solver works them out for any setup you enter.</p>
+      <h3>Why do my lockpicks keep breaking?</h3>
+      <p>Untrained characters have very low lockpick durability. Putting points into lockpicking increases attempts per pick and makes the minigame far more forgiving.</p>
+      <h3>Is this Gothic Remake lockpicking guide and solver free?</h3>
+      <p>Yes. The guide and the chest solver are completely free to use in your browser.</p>
+    </section>
+
+    <p class="guide-jump"><a href="#screen1">↑ Back to the lock solver</a></p>
+  </article>
 
   <footer class="credit">Made by <a href="https://artosetrov.com/" target="_blank" rel="noopener">artosetrov.com</a></footer>
 </div>
@@ -610,5 +736,41 @@ document.querySelectorAll('#plateChoice button').forEach(b=>b.classList.toggle('
 renderPositions(); renderCouplings();
 </script>
 <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="art.osetrov" data-description="Support me on Buy me a coffee!" data-message="" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Gothic Remake Hacking Locks – Lockpicking Guide & Chest Solver",
+      "description": "A free Gothic Remake lockpicking guide and chest solver that gives step-by-step solutions for opening locked chests.",
+      "image": "https://masters-lockpick.vercel.app/og-image.jpg",
+      "inLanguage": "en",
+      "mainEntityOfPage": { "@type": "WebPage", "@id": "https://masters-lockpick.vercel.app/" },
+      "author": { "@type": "Person", "name": "Artem Osetrov", "url": "https://artosetrov.com/" },
+      "publisher": { "@type": "Person", "name": "Artem Osetrov", "url": "https://artosetrov.com/" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://masters-lockpick.vercel.app/" },
+        { "@type": "ListItem", "position": 2, "name": "Gothic Remake Hacking Locks" }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "What is hacking locks in Gothic Remake?", "acceptedAnswer": { "@type": "Answer", "text": "It is the chest lockpicking minigame where you align every plate's pin on the goal hole to open a locked chest or door." } },
+        { "@type": "Question", "name": "How does lockpicking work in Gothic Remake?", "acceptedAnswer": { "@type": "Answer", "text": "You move plates left or right to shift their pins. Some plates are linked and move together, so you must account for those couplings to reach the solution." } },
+        { "@type": "Question", "name": "How do I open locked chests in Gothic Remake without the key?", "acceptedAnswer": { "@type": "Answer", "text": "Use lockpicks and the lockpicking skill. Enter the chest's layout in the solver to get the exact sequence of moves that opens it." } },
+        { "@type": "Question", "name": "Are there fixed lock combinations in Gothic Remake?", "acceptedAnswer": { "@type": "Answer", "text": "Each chest has its own starting layout and links, so the Gothic Remake lock combinations vary. The solver works them out for any setup you enter." } },
+        { "@type": "Question", "name": "Why do my lockpicks keep breaking?", "acceptedAnswer": { "@type": "Answer", "text": "Untrained characters have very low lockpick durability. Putting points into lockpicking increases attempts per pick and makes the minigame far more forgiving." } },
+        { "@type": "Question", "name": "Is this Gothic Remake lockpicking guide and solver free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The guide and the chest solver are completely free to use in your browser." } }
+      ]
+    }
+  ]
+}
+</script>
 </body>
 </html>
