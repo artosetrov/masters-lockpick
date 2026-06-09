@@ -48,23 +48,32 @@
   .btn.block{display:block;width:100%}
   .btn:disabled{opacity:.35}
   .toolbar{display:flex;flex-direction:column;gap:9px}
+  .card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px}
+  .card-head h2{margin:0}
+  .icon-actions{display:flex;gap:7px;flex:none}
+  .icon-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--panel3);color:var(--accent);border:1px solid var(--line);border-radius:9px;padding:0;flex:none}
+  .icon-btn:active{filter:brightness(.9)}
+  .icon-btn svg{width:18px;height:18px}
   .navrow{display:flex;gap:10px}
   .navrow .btn{flex:1}
 
-  .stepper{display:flex;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:10px;overflow:hidden;width:max-content}
-  .stepper button{width:48px;height:48px;background:transparent;border:none;color:var(--accent);font-size:25px;font-weight:700}
-  .stepper button:active{background:var(--panel3)}
-  .stepper .val{min-width:54px;text-align:center;font-size:21px;font-weight:700}
-  .field-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  /* plate-count choice (all options visible) */
+  .choice{display:flex;gap:8px}
+  .choice button{flex:1;min-height:54px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;
+    color:var(--txt);font-size:20px;font-weight:700;transition:background .12s,border-color .12s,color .12s}
+  .choice button.on{background:var(--accent);color:#1a1206;border-color:var(--accent)}
+  .choice button:active{transform:scale(.96)}
 
   /* lock board */
   .board{display:flex;flex-direction:column;gap:8px}
-  .prow{display:flex;align-items:center;gap:10px;padding:3px 4px;border-radius:9px;min-height:48px}
+  .prow{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:13px;min-height:48px}
   .prow.moved{background:rgba(217,164,65,.10)}
   /* moving-row emphasis on the solution board */
-  .prow.driver{background:rgba(217,164,65,.18);box-shadow:inset 3px 0 0 var(--accent)}
-  .prow.pulled{background:rgba(217,164,65,.07);box-shadow:inset 3px 0 0 rgba(217,164,65,.45)}
+  .prow.driver{box-shadow:inset 4px 0 0 var(--accent),0 0 0 1.5px var(--accent),0 0 14px rgba(217,164,65,.22)}
+  .prow.pulled{box-shadow:inset 4px 0 0 rgba(217,164,65,.55)}
   .prow.driver .hole.pin,.prow.pulled .hole.pin{box-shadow:0 0 12px rgba(230,178,60,.75)}
+  /* more breathing room between the strip background and the holes (answer board) */
+  #playerBoard .prow{padding:15px 22px;border-radius:16px}
   .prow .tag{width:48px;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:4px;
     font-size:13px;color:var(--muted);font-weight:600;text-align:right}
   .prow.moved .tag,.prow.driver .tag,.prow.pulled .tag{color:var(--accent);font-weight:800}
@@ -86,6 +95,11 @@
   .hole.pin::after{display:none}
   .hole.pin.done{background:var(--pinon);border-color:#e96a52;box-shadow:0 0 9px rgba(207,59,34,.6)}
   .hole.tappable:active{transform:scale(.86)}
+  .keyicon{position:absolute;left:50%;top:50%;width:80%;transform:translate(-50%,-50%);pointer-events:none;z-index:3;
+    filter:drop-shadow(0 1px 2px rgba(0,0,0,.7))}
+  /* mini plate widget inside coupling cards */
+  .holes.mini{margin:0 0 12px;gap:clamp(3px,1.2vw,7px)}
+  .holes.mini .hole{width:clamp(20px,5.6vw,28px);height:clamp(20px,5.6vw,28px);border-width:2px}
   .free-pill{font-size:11px;color:var(--accent2);padding:2px 9px;border:1px solid var(--accent2);border-radius:20px;white-space:nowrap}
 
   /* coupling cards — progressive disclosure */
@@ -112,6 +126,8 @@
   .add-chip{min-height:44px;min-width:54px;border:1.5px solid var(--accent);background:rgba(217,164,65,.1);color:var(--accent);
     border-radius:9px;padding:0 14px;font-size:15px;font-weight:700;display:flex;align-items:center;gap:5px;justify-content:center}
   .add-chip:active{transform:scale(.95)}
+  .add-chip.disabled{border-color:var(--line);background:transparent;color:var(--muted);opacity:.5;cursor:default}
+  .add-chip.disabled:active{transform:none}
   .add-done{margin-top:9px;min-height:42px;background:var(--panel3);border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:0 16px;font-size:13px;font-weight:600}
   .legend-line{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.8}
   .kbd{display:inline-block;padding:1px 7px;border:1px solid var(--line);border-radius:5px;margin:0 1px}
@@ -126,12 +142,33 @@
   .pseg::before{content:"";display:block;width:100%;height:6px;border-radius:3px;background:var(--panel3);transition:background .15s}
   .pseg.done::before{background:var(--accent)}
   .pseg.cur::before{background:var(--accent2);box-shadow:0 0 8px rgba(127,176,105,.55)}
-  .move-box{background:var(--panel2);border:1px solid var(--line);border-left:4px solid var(--accent);
-    border-radius:0 12px 12px 0;padding:13px 15px;margin-bottom:16px;min-height:64px}
-  .move-box.start{border-left-color:var(--muted)}
+  .move-box{position:relative;overflow:hidden;
+    background:linear-gradient(135deg,rgba(217,164,65,.16),var(--panel2) 62%);
+    border:1px solid rgba(217,164,65,.28);border-left:4px solid var(--accent);
+    border-radius:0 14px 14px 0;padding:15px 16px;margin-bottom:16px;min-height:64px;
+    box-shadow:0 6px 22px rgba(0,0,0,.28)}
+  .move-box.start{background:var(--panel2);border-color:var(--line);border-left-color:var(--muted);box-shadow:none}
   .move-title{font-size:17px;font-weight:700;margin:0 0 5px}
   .move-title .arrow{color:var(--accent)}
-  .move-drag{font-size:13px;color:var(--muted);line-height:1.5}
+  .move-drag{font-size:13px;color:var(--muted);line-height:1.5;margin-top:10px}
+  /* hero move banner */
+  .move-hero{display:flex;align-items:center;gap:14px}
+  .plate-badge{flex:none;width:56px;height:56px;border-radius:15px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:23px;font-weight:800;color:#1a1206;letter-spacing:.5px;
+    background:linear-gradient(135deg,#f3c869,#d9a441);
+    box-shadow:0 5px 16px rgba(217,164,65,.4),inset 0 1px 0 rgba(255,255,255,.35)}
+  .move-info{flex:1;min-width:0}
+  .move-headline{font-size:22px;font-weight:800;letter-spacing:.2px;margin:0;line-height:1.1}
+  .move-headline b{color:var(--accent)}
+  .move-sub{font-size:12.5px;text-transform:uppercase;letter-spacing:1.3px;color:var(--muted);margin-top:5px;font-weight:600}
+  .dir-glyph{flex:none;font-size:42px;font-weight:800;color:var(--accent);line-height:1;
+    text-shadow:0 0 16px rgba(217,164,65,.45)}
+  .dir-glyph.r{animation:nudge-r 1.15s ease-in-out infinite}
+  .dir-glyph.l{animation:nudge-l 1.15s ease-in-out infinite}
+  @keyframes nudge-r{0%,100%{transform:translateX(0);opacity:.5}50%{transform:translateX(7px);opacity:1}}
+  @keyframes nudge-l{0%,100%{transform:translateX(0);opacity:.5}50%{transform:translateX(-7px);opacity:1}}
+  @media (prefers-reduced-motion:reduce){.dir-glyph.r,.dir-glyph.l{animation:none;opacity:1}}
   .solved-badge{background:rgba(127,176,105,.12);border:1px solid var(--accent2);color:var(--accent2);
     border-radius:10px;padding:11px 14px;font-size:15px;font-weight:600;text-align:center;margin-top:14px}
   .pnav{position:sticky;bottom:0;display:flex;gap:10px;padding:10px 0 4px;
@@ -162,22 +199,29 @@
 
     <div class="card">
       <h2>Number of plates</h2>
-      <div class="field-row">
-        <div class="stepper">
-          <button id="decN">−</button><span class="val" id="valN">3</span><button id="incN">+</button>
-        </div>
-        <span class="legend-line" id="warnN"></span>
+      <div class="choice" id="plateChoice">
+        <button data-n="3">3</button>
+        <button data-n="4">4</button>
+        <button data-n="5">5</button>
+        <button data-n="6">6</button>
+        <button data-n="7">7</button>
       </div>
     </div>
 
     <div class="card">
-      <h2>Where the pins are now</h2>
+      <div class="card-head">
+        <h2>Where the pins are now</h2>
+        <div class="icon-actions">
+          <button class="icon-btn" id="reset" title="Reset all to #4" aria-label="Reset all to #4">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+          </button>
+          <button class="icon-btn" id="randomize" title="Random positions" aria-label="Random positions">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M21 3 13 11"/><path d="M16 21h5v-5"/><path d="m21 21-6-6"/><path d="M3 3l5 5"/></svg>
+          </button>
+        </div>
+      </div>
       <p class="sub" style="margin:0 0 12px">Tap the hole that holds the pin on each plate. Green ring is the goal (#4). <b>P1 is at the bottom</b>.</p>
       <div class="board" id="positions"></div>
-      <div class="toolbar" style="margin-top:14px">
-        <button class="btn ghost block" id="reset">Reset all to #4</button>
-        <button class="btn ghost block" id="randomize">Random positions</button>
-      </div>
     </div>
 
     <button class="btn block" id="toStep2">Next → links</button>
@@ -192,6 +236,7 @@
     <div class="card">
       <p class="sub" style="margin:0 0 12px">For each plate tap <b>“+ link”</b> and add the plates that move with it. Then pick the direction: <b>same way</b> or <b>opposite</b>.</p>
       <div id="couplings"></div>
+      <button class="btn ghost block" id="clearLinks" style="margin:2px 0 14px">↺ Reset all links</button>
       <div class="legend-line">
         <span class="kbd" style="color:var(--accent2)">same way</span> — moves in the same direction &nbsp;·&nbsp;
         <span class="kbd" style="color:var(--pin)">opposite</span> — moves the other way.<br>
@@ -229,6 +274,22 @@ let N=3, positions=[], couplings=[];
 let sol=null, pIndex=0;   // solution player state
 
 function el(t,c,h){const e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e;}
+/* in-game plate colour shown as the row background: P1 bluish steel, the rest grey */
+function plateBg(i){ return i===0 ? 'rgba(74,104,150,.26)' : 'rgba(146,142,132,.14)'; }
+/* the key sits in the centre hole (#4) of the bottom blue plate (P1) */
+const KEY_SVG='<svg class="keyicon" viewBox="0 0 28 16" fill="none" stroke="#dcd6c6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="8" r="4.2"/><line x1="10" y1="8" x2="26" y2="8"/><line x1="20" y1="8" x2="20" y2="12"/><line x1="24" y1="8" x2="24" y2="12"/></svg>';
+function maybeKey(hole,i,h){ if(i===0 && h===TARGET) hole.insertAdjacentHTML('beforeend',KEY_SVG); }
+/* small read-only plate widget (holes + current pin + #4 ring + key) for the links screen */
+function miniPlate(i){
+  const holes=el('div','holes mini');
+  for(let h=1;h<=HOLES;h++){
+    const isPin=positions[i]===h, done=isPin&&h===TARGET;
+    const hole=el('div','hole'+(h===TARGET?' target':'')+(isPin?' pin':'')+(done?' done':''));
+    maybeKey(hole,i,h);
+    holes.appendChild(hole);
+  }
+  return holes;
+}
 function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
 
 function initState(keep){
@@ -245,13 +306,14 @@ function initState(keep){
 function renderPositions(){
   const box=document.getElementById('positions'); box.innerHTML='';
   for(let i=N-1;i>=0;i--){
-    const row=el('div','prow');
+    const row=el('div','prow'); row.style.background=plateBg(i);
     row.appendChild(el('span','tag','P'+(i+1)));
     const holes=el('div','holes');
     for(let h=1;h<=HOLES;h++){
       const cls='hole tappable'+(h===TARGET?' target':'')+(positions[i]===h?' pin':'')+(positions[i]===h&&h===TARGET?' done':'');
       const hole=el('div',cls);
       hole.onclick=()=>{positions[i]=h; renderPositions();};
+      maybeKey(hole,i,h);
       holes.appendChild(hole);
     }
     row.appendChild(holes);
@@ -267,16 +329,19 @@ function removeLink(i,j){ couplings[i]=couplings[i].filter(c=>c.j!==j); renderCo
 
 function renderCouplings(){
   const box=document.getElementById('couplings'); box.innerHTML='';
-  for(let i=0;i<N;i++){
+  for(let i=N-1;i>=0;i--){           // bottom-up: P1 at the bottom, like the main board
     const card=el('div','ccard');
+    card.style.background='linear-gradient('+plateBg(i)+','+plateBg(i)+'), var(--panel2)';
     const head=el('div','chead');
     head.appendChild(el('span','cname','Move <b>P'+(i+1)+'</b>'));
     if(couplings[i].length===0 && !addOpen.has(i)) head.appendChild(el('span','free-pill','free'));
     card.appendChild(head);
+    card.appendChild(miniPlate(i));   // plate widget with current pin
 
-    const links=couplings[i].slice().sort((a,b)=>a.j-b.j);
+    const links=couplings[i].slice().sort((a,b)=>b.j-a.j);   // bottom-up: P1 at the bottom
     for(const c of links){
       const row=el('div','link-row');
+      row.style.background='linear-gradient('+plateBg(c.j)+','+plateBg(c.j)+'), #0e0b08';
       row.appendChild(el('span','ll','P'+(c.j+1)+' moves'));
       const seg=el('div','seg');
       const bSame=el('button','same'+(c.sign===1?' on':''),'→ same way');
@@ -290,29 +355,27 @@ function renderCouplings(){
     }
 
     const available=[]; for(let j=0;j<N;j++) if(j!==i && !couplings[i].some(c=>c.j===j)) available.push(j);
-    if(available.length){
-      if(addOpen.has(i)){
-        const picker=el('div','add-picker');
-        picker.appendChild(el('p','pl','which plate moves together with P'+(i+1)+'?'));
-        const chips=el('div','add-chips');
-        for(const j of available){
-          const ch=el('button','add-chip','<span style="font-size:13px">+</span> P'+(j+1));
-          ch.onclick=()=>addLink(i,j);
-          chips.appendChild(ch);
-        }
-        picker.appendChild(chips);
-        const done=el('button','add-done','Done'); done.onclick=()=>{addOpen.delete(i); renderCouplings();};
-        picker.appendChild(done);
-        card.appendChild(picker);
-      }else{
-        const add=el('button','add-btn','+ link a plate');
-        add.onclick=()=>{addOpen.add(i); renderCouplings();};
-        card.appendChild(add);
+    if(addOpen.has(i)){
+      const picker=el('div','add-picker');
+      picker.appendChild(el('p','pl','which plate moves together with P'+(i+1)+'?'));
+      const chips=el('div','add-chips');
+      for(let j=0;j<N;j++){
+        const isSelf=j===i, linked=couplings[i].some(c=>c.j===j), disabled=isSelf||linked;
+        const label=disabled?'P'+(j+1):'<span style="font-size:13px">+</span> P'+(j+1);
+        const ch=el('button','add-chip'+(disabled?' disabled':''),label);
+        if(disabled){ ch.disabled=true; ch.title=isSelf?'this plate (can’t link to itself)':'already linked'; }
+        else ch.onclick=()=>addLink(i,j);
+        chips.appendChild(ch);
       }
+      picker.appendChild(chips);
+      const done=el('button','add-done','Done'); done.onclick=()=>{addOpen.delete(i); renderCouplings();};
+      picker.appendChild(done);
+      card.appendChild(picker);
+    }else if(available.length){
+      const add=el('button','add-btn','+ Add a plate that moves with P'+(i+1));
+      add.onclick=()=>{addOpen.add(i); renderCouplings();};
+      card.appendChild(add);
     }
-    if(couplings[i].length===0 && !addOpen.has(i))
-      card.appendChild(el('p','free-note','moves on its own, pulls nothing'));
-
     box.appendChild(card);
   }
 }
@@ -378,7 +441,7 @@ function bigBoard(pos,meta){
   for(let i=N-1;i>=0;i--){
     const isMoved  = !!(changed && changed.has(i));
     const isDriver = i===driver;
-    const row=el('div','prow'+(isMoved?(isDriver?' driver':' pulled'):''));
+    const row=el('div','prow'+(isMoved?(isDriver?' driver':' pulled'):'')); row.style.background=plateBg(i);
 
     const bHole = before ? before[i] : null;
     const aHole = pos[i];
@@ -400,6 +463,7 @@ function bigBoard(pos,meta){
       }else if(dir!==0 && ((dir>0&&h>bHole&&h<aHole)||(dir<0&&h<bHole&&h>aHole))){
         hole.appendChild(el('span','trail-mark',dir>0?'›':'‹')); // motion trail
       }
+      maybeKey(hole,i,h);
       holes.appendChild(hole);
     }
     row.appendChild(holes); b.appendChild(row);
@@ -433,7 +497,18 @@ function renderPlayer(){
   }else{
     box.className='move-box';
     const m=meta.m;
-    let html='<div class="move-title">Plate '+(m.plate+1)+' <span class="arrow">'+arrow(m.delta)+' by '+Math.abs(m.delta)+'</span></div>';
+    const dir=m.delta>0?'right':'left';
+    const n=Math.abs(m.delta);
+    const glyph=m.delta>0?'→':'←';
+    let html=''+
+      '<div class="move-hero">'+
+        '<div class="plate-badge">P'+(m.plate+1)+'</div>'+
+        '<div class="move-info">'+
+          '<div class="move-headline"><b>'+dir.charAt(0).toUpperCase()+dir.slice(1)+'</b> by '+n+'</div>'+
+          '<div class="move-sub">Plate '+(m.plate+1)+' · '+n+' '+(n===1?'hole':'holes')+'</div>'+
+        '</div>'+
+        '<div class="dir-glyph '+(m.delta>0?'r':'l')+'">'+glyph+'</div>'+
+      '</div>';
     const drag=describeDrag(m.plate,m.delta,meta.before);
     if(drag) html+='<div class="move-drag">'+drag+'</div>';
     box.innerHTML=html;
@@ -473,15 +548,15 @@ function runSolve(){
 
 /* ---------- controls ---------- */
 function setN(v){
-  v=Math.max(2,Math.min(8,v));
-  N=v; document.getElementById('valN').textContent=v;
-  document.getElementById('warnN').textContent = v>=8?'the search may take a couple of seconds':'';
+  v=Math.max(3,Math.min(7,v));
+  N=v;
+  document.querySelectorAll('#plateChoice button').forEach(b=>b.classList.toggle('on',+b.dataset.n===v));
   initState(true); renderPositions(); renderCouplings();
 }
-document.getElementById('incN').onclick=()=>setN(N+1);
-document.getElementById('decN').onclick=()=>setN(N-1);
+document.querySelectorAll('#plateChoice button').forEach(b=>{ b.onclick=()=>setN(+b.dataset.n); });
 document.getElementById('reset').onclick=()=>{ for(let i=0;i<N;i++)positions[i]=TARGET; renderPositions(); };
 document.getElementById('randomize').onclick=()=>{ for(let i=0;i<N;i++)positions[i]=1+Math.floor(Math.random()*HOLES); renderPositions(); };
+document.getElementById('clearLinks').onclick=()=>{ for(let i=0;i<N;i++) couplings[i]=[]; addOpen.clear(); renderCouplings(); };
 document.getElementById('toStep2').onclick=()=>{ renderCouplings(); show('screen2'); };
 document.getElementById('backTo1').onclick=()=>{ renderPositions(); show('screen1'); };
 document.getElementById('doSolve').onclick=runSolve;
@@ -498,6 +573,7 @@ document.addEventListener('keydown',e=>{
 initState(false);
 if(N>=2) couplings[0].push({j:1,sign:1});
 positions[0]=2; positions[1]=6; if(N>=3) positions[2]=5;
+document.querySelectorAll('#plateChoice button').forEach(b=>b.classList.toggle('on',+b.dataset.n===N));
 renderPositions(); renderCouplings();
 </script>
 <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="art.osetrov" data-description="Support me on Buy me a coffee!" data-message="" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
