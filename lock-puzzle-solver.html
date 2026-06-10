@@ -136,9 +136,23 @@
   .hole.tappable:active{transform:scale(.86)}
   .keyicon{position:absolute;left:50%;top:50%;width:80%;transform:translate(-50%,-50%);pointer-events:none;z-index:3;
     filter:drop-shadow(0 1px 2px rgba(0,0,0,.7))}
-  /* mini plate widget inside coupling cards */
-  .holes.mini{margin:0 0 12px;gap:clamp(3px,1.2vw,7px)}
-  .holes.mini .hole{width:clamp(20px,5.6vw,28px);height:clamp(20px,5.6vw,28px);border-width:2px}
+  /* plate row inside coupling cards — same circles as Step 1, just less side padding (already nested) */
+  .ccard .plate-row{padding:8px 10px;margin-bottom:10px}
+  /* A+B — one-tap link chips with direction */
+  .links-bar{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:0 0 8px}
+  .lb-label{font-size:12.5px;color:var(--muted);margin-right:2px}
+  .link-chip{min-height:40px;border-radius:9px;font-size:14px;font-weight:700;display:flex;align-items:center}
+  .link-chip.add{padding:0 13px;border:1.5px dashed var(--line);background:transparent;color:var(--accent)}
+  .link-chip.add:active{background:rgba(217,164,65,.08);transform:scale(.97)}
+  .link-chip.on{background:#0e0b08;border:1px solid var(--line);overflow:hidden;padding-left:11px;gap:9px}
+  .lc-name{font-weight:800;color:var(--txt)}
+  .lc-dir{min-height:40px;padding:0 11px;border:none;font-size:12.5px;font-weight:700;white-space:nowrap;background:transparent}
+  .lc-dir.same{color:var(--accent2);background:rgba(127,176,105,.16)}
+  .lc-dir.opp{color:var(--pin);background:rgba(224,83,31,.16)}
+  .lc-x{min-width:40px;min-height:40px;border:none;background:var(--panel3);color:var(--muted);font-size:17px;border-left:1px solid var(--line)}
+  .lc-x:active{background:#3c2f24}
+  .lb-sentence{font-size:12.5px;color:var(--muted);margin:2px 0 0;line-height:1.55}
+  .lb-sentence b{color:var(--accent)}
   .free-pill{font-size:11px;color:var(--accent2);padding:2px 9px;border:1px solid var(--accent2);border-radius:20px;white-space:nowrap}
 
   /* coupling cards — progressive disclosure */
@@ -192,22 +206,42 @@
   .move-drag{font-size:13px;color:var(--muted);line-height:1.5;margin-top:10px}
   /* hero move banner */
   .move-hero{display:flex;align-items:center;gap:14px}
-  .plate-badge{flex:none;width:56px;height:56px;border-radius:15px;
+  .plate-badge{flex:none;width:56px;height:56px;border-radius:50%;
     display:flex;align-items:center;justify-content:center;
-    font-size:23px;font-weight:800;color:#1a1206;letter-spacing:.5px;
-    background:linear-gradient(135deg,#f3c869,#d9a441);
-    box-shadow:0 5px 16px rgba(217,164,65,.4),inset 0 1px 0 rgba(255,255,255,.35)}
+    font-size:21px;font-weight:800;color:#1a1206;letter-spacing:.3px;
+    background:radial-gradient(circle at 38% 32%,#f7d27e,#d9a441 78%);
+    box-shadow:0 5px 16px rgba(217,164,65,.45),inset 0 1px 1px rgba(255,255,255,.45),inset 0 -3px 6px rgba(120,80,10,.35);
+    border:1px solid #f4cd61}
   .move-info{flex:1;min-width:0}
   .move-headline{font-size:22px;font-weight:800;letter-spacing:.2px;margin:0;line-height:1.1}
   .move-headline b{color:var(--accent)}
   .move-sub{font-size:12.5px;text-transform:uppercase;letter-spacing:1.3px;color:var(--muted);margin-top:5px;font-weight:600}
-  .dir-glyph{flex:none;font-size:42px;font-weight:800;color:var(--accent);line-height:1;
-    text-shadow:0 0 16px rgba(217,164,65,.45)}
-  .dir-glyph.r{animation:nudge-r 1.15s ease-in-out infinite}
-  .dir-glyph.l{animation:nudge-l 1.15s ease-in-out infinite}
-  @keyframes nudge-r{0%,100%{transform:translateX(0);opacity:.5}50%{transform:translateX(7px);opacity:1}}
-  @keyframes nudge-l{0%,100%{transform:translateX(0);opacity:.5}50%{transform:translateX(-7px);opacity:1}}
-  @media (prefers-reduced-motion:reduce){.dir-glyph.r,.dir-glyph.l{animation:none;opacity:1}}
+  /* plate/pin duality schematic */
+  .pp{flex:none;width:92px;display:flex;flex-direction:column;gap:3px}
+  .pp-row{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:800;
+    text-transform:uppercase;letter-spacing:.8px;line-height:1}
+  .pp-top{color:var(--muted)}
+  .pp-bot{color:var(--accent);justify-content:flex-end}
+  .pp-arr{font-size:14px;font-weight:800}
+  .pp-top .pp-arr{animation:pparr-plate 1.8s ease-in-out infinite}
+  .pp-bot .pp-arr{animation:pparr-pin 1.8s ease-in-out infinite}
+  .pp-track{height:18px;border-radius:6px;background:#0e0b08;border:1px solid var(--line);
+    position:relative;overflow:hidden}
+  .pp-plate{position:absolute;top:2px;bottom:2px;left:5px;right:5px;border-radius:4px;
+    background:linear-gradient(135deg,rgba(67,52,38,.2),#2a2118);border:1px solid rgba(217,164,65,.32);
+    display:flex;align-items:center;animation:pp-plate-move 1.8s ease-in-out infinite}
+  .pp-pin{width:8px;height:8px;border-radius:50%;background:var(--accent);margin-left:5px;
+    box-shadow:0 0 6px rgba(217,164,65,.8);animation:pp-pin-move 1.8s ease-in-out infinite}
+  .pp.lft .pp-pin{margin-left:auto;margin-right:5px}
+  .pp.lft .pp-bot{justify-content:flex-start}
+  .pp.lft .pp-top{justify-content:flex-end}
+  @keyframes pp-plate-move{0%,100%{transform:translateX(0)}50%{transform:translateX(var(--plate-x,-5px))}}
+  @keyframes pp-pin-move{0%,100%{transform:translateX(0)}50%{transform:translateX(var(--pin-x,11px))}}
+  @keyframes pparr-pin{0%,100%{transform:translateX(0);opacity:.55}50%{transform:translateX(var(--pin-nudge,5px));opacity:1}}
+  @keyframes pparr-plate{0%,100%{transform:translateX(0);opacity:.55}50%{transform:translateX(var(--plate-nudge,-5px));opacity:1}}
+  @media (prefers-reduced-motion:reduce){
+    .pp-plate,.pp-pin,.pp-top .pp-arr,.pp-bot .pp-arr{animation:none}
+    .pp-pin{transform:translateX(var(--pin-x,11px))}.pp-plate{transform:translateX(var(--plate-x,-5px))}}
   .solved-badge{background:rgba(127,176,105,.12);border:1px solid var(--accent2);color:var(--accent2);
     border-radius:10px;padding:11px 14px;font-size:15px;font-weight:600;text-align:center;margin-top:14px}
   .pnav{position:sticky;bottom:0;display:flex;gap:10px;padding:10px 0 4px;
@@ -217,6 +251,17 @@
     font-family:inherit;font-size:15px;font-weight:700;letter-spacing:.3px;text-align:center;
     text-decoration:none;display:flex;align-items:center;justify-content:center;gap:7px}
   .bmc-btn:active{filter:brightness(.92)}
+  /* player actions row (play / copy / share) */
+  .player-actions{display:flex;gap:8px;margin:0 0 6px}
+  .pa-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 8px;font-size:13px}
+  .pa-btn svg{width:16px;height:16px;flex:none}
+  /* toast */
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(18px);
+    background:var(--panel3);color:var(--txt);border:1px solid var(--accent);
+    padding:11px 18px;border-radius:24px;font-size:13.5px;font-weight:600;max-width:90vw;text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;pointer-events:none;z-index:60;
+    transition:opacity .2s ease,transform .2s ease}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
   .legend{font-size:12px;color:var(--muted);line-height:1.8;margin-top:14px}
   .dot{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-1px;margin:0 3px 0 10px}
   .err{color:var(--bad);font-size:14.5px;line-height:1.6;margin-top:12px}
@@ -282,6 +327,9 @@
           <button class="icon-btn" id="randomize" title="Random positions" aria-label="Random positions">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M21 3 13 11"/><path d="M16 21h5v-5"/><path d="m21 21-6-6"/><path d="M3 3l5 5"/></svg>
           </button>
+          <button class="icon-btn" id="shareLock" title="Share this lock" aria-label="Copy a shareable link to this lock">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
+          </button>
         </div>
       </div>
       <p class="sub" style="margin:0 0 12px">Tap the hole that holds the pin on each plate. Green ring is the goal (#4). <b>P1 is at the bottom</b>.</p>
@@ -324,6 +372,11 @@
     <div class="board" id="playerBoard"></div>
     <div id="solvedBadge"></div>
     <div class="legend" id="playerLegend"></div>
+    <div class="player-actions">
+      <button class="btn ghost pa-btn" id="playBtn"></button>
+      <button class="btn ghost pa-btn" id="copyBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>Copy</span></button>
+      <button class="btn ghost pa-btn" id="shareBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg><span>Share</span></button>
+    </div>
     <div class="pnav">
       <button class="btn ghost" id="pPrev">← Back</button>
       <button class="btn" id="pNext">Next →</button>
@@ -416,6 +469,7 @@
 
   <footer class="credit">Made by <a href="https://artosetrov.com/" target="_blank" rel="noopener">artosetrov.com</a></footer>
 </div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script>
 const TARGET=4, HOLES=7;
@@ -428,16 +482,19 @@ function plateBg(i){ return i===0 ? 'rgba(74,104,150,.26)' : 'rgba(146,142,132,.
 /* the key sits in the centre hole (#4) of the bottom blue plate (P1) */
 const KEY_SVG='<svg class="keyicon" viewBox="0 0 28 16" fill="none" stroke="#dcd6c6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="8" r="4.2"/><line x1="10" y1="8" x2="26" y2="8"/><line x1="20" y1="8" x2="20" y2="12"/><line x1="24" y1="8" x2="24" y2="12"/></svg>';
 function maybeKey(hole,i,h){ if(i===0 && h===TARGET) hole.insertAdjacentHTML('beforeend',KEY_SVG); }
-/* small read-only plate widget (holes + current pin + #4 ring + key) for the links screen */
+/* plate row for the links screen — identical layout to Step 1 (same label, holes, tint) */
 function miniPlate(i){
-  const holes=el('div','holes mini');
+  const row=el('div','prow plate-row'); row.style.background=plateBg(i); row.dataset.plate=i;
+  row.appendChild(el('span','tag','P'+(i+1)));
+  const holes=el('div','holes');
   for(let h=1;h<=HOLES;h++){
     const isPin=positions[i]===h, done=isPin&&h===TARGET;
     const hole=el('div','hole'+(h===TARGET?' target':'')+(isPin?' pin':'')+(done?' done':''));
     maybeKey(hole,i,h);
     holes.appendChild(hole);
   }
-  return holes;
+  row.appendChild(holes);
+  return row;
 }
 function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
 
@@ -468,10 +525,11 @@ function renderPositions(){
     row.appendChild(holes);
     box.appendChild(row);
   }
+  saveLocal();
 }
 
-/* ---------- coupling cards (progressive disclosure) ---------- */
-const addOpen=new Set();
+/* ---------- coupling cards ---------- */
+const addOpen=new Set();   // (kept for clearLinks compatibility)
 function setSign(i,j,sign){ const c=couplings[i].find(c=>c.j===j); if(c){c.sign=sign; renderCouplings();} }
 function addLink(i,j){ if(!couplings[i].some(c=>c.j===j)){ couplings[i].push({j,sign:1}); } renderCouplings(); }
 function removeLink(i,j){ couplings[i]=couplings[i].filter(c=>c.j!==j); renderCouplings(); }
@@ -480,53 +538,39 @@ function renderCouplings(){
   const box=document.getElementById('couplings'); box.innerHTML='';
   for(let i=N-1;i>=0;i--){           // bottom-up: P1 at the bottom, like the main board
     const card=el('div','ccard');
-    card.style.background='linear-gradient('+plateBg(i)+','+plateBg(i)+'), var(--panel2)';
-    const head=el('div','chead');
-    head.appendChild(el('span','cname','Move <b>P'+(i+1)+'</b>'));
-    if(couplings[i].length===0 && !addOpen.has(i)) head.appendChild(el('span','free-pill','free'));
-    card.appendChild(head);
-    card.appendChild(miniPlate(i));   // plate widget with current pin
+    card.appendChild(miniPlate(i));   // same plate row as Step 1 (matching circle layout)
 
-    const links=couplings[i].slice().sort((a,b)=>b.j-a.j);   // bottom-up: P1 at the bottom
-    for(const c of links){
-      const row=el('div','link-row');
-      row.style.background='linear-gradient('+plateBg(c.j)+','+plateBg(c.j)+'), #0e0b08';
-      row.appendChild(el('span','ll','P'+(c.j+1)+' moves'));
-      const seg=el('div','seg');
-      const bSame=el('button','same'+(c.sign===1?' on':''),'→ same way');
-      const bOpp =el('button','opp'+(c.sign===-1?' on':''),'← opposite');
-      bSame.classList.toggle('on',c.sign===1); bOpp.classList.toggle('on',c.sign===-1);
-      bSame.onclick=()=>setSign(i,c.j,1); bOpp.onclick=()=>setSign(i,c.j,-1);
-      seg.appendChild(bSame); seg.appendChild(bOpp);
-      row.appendChild(seg);
-      const rm=el('button','rm','✕'); rm.onclick=()=>removeLink(i,c.j); row.appendChild(rm);
-      card.appendChild(row);
-    }
-
-    const available=[]; for(let j=0;j<N;j++) if(j!==i && !couplings[i].some(c=>c.j===j)) available.push(j);
-    if(addOpen.has(i)){
-      const picker=el('div','add-picker');
-      picker.appendChild(el('p','pl','which plate moves together with P'+(i+1)+'?'));
-      const chips=el('div','add-chips');
-      for(let j=0;j<N;j++){
-        const isSelf=j===i, linked=couplings[i].some(c=>c.j===j), disabled=isSelf||linked;
-        const label=disabled?'P'+(j+1):'<span style="font-size:13px">+</span> P'+(j+1);
-        const ch=el('button','add-chip'+(disabled?' disabled':''),label);
-        if(disabled){ ch.disabled=true; ch.title=isSelf?'this plate (can’t link to itself)':'already linked'; }
-        else ch.onclick=()=>addLink(i,j);
-        chips.appendChild(ch);
+    // A — one-tap link chips with B — visual direction
+    const bar=el('div','links-bar');
+    bar.appendChild(el('span','lb-label','Moves with:'));
+    for(let j=0;j<N;j++){
+      if(j===i) continue;
+      const link=couplings[i].find(c=>c.j===j);
+      if(link){
+        const chip=el('div','link-chip on');
+        chip.appendChild(el('span','lc-name','P'+(j+1)));
+        const dirBtn=el('button','lc-dir '+(link.sign===1?'same':'opp'), link.sign===1?'⇉ same':'⇄ opp');
+        dirBtn.title='Toggle same / opposite direction';
+        dirBtn.onclick=()=>setSign(i,j,link.sign===1?-1:1);
+        chip.appendChild(dirBtn);
+        const x=el('button','lc-x','×'); x.title='Remove link'; x.onclick=()=>removeLink(i,j); chip.appendChild(x);
+        bar.appendChild(chip);
+      }else{
+        const add=el('button','link-chip add','+ P'+(j+1)); add.onclick=()=>addLink(i,j);
+        bar.appendChild(add);
       }
-      picker.appendChild(chips);
-      const done=el('button','add-done','Done'); done.onclick=()=>{addOpen.delete(i); renderCouplings();};
-      picker.appendChild(done);
-      card.appendChild(picker);
-    }else if(available.length){
-      const add=el('button','add-btn','+ Add a plate that moves with P'+(i+1));
-      add.onclick=()=>{addOpen.add(i); renderCouplings();};
-      card.appendChild(add);
     }
+    card.appendChild(bar);
+
+    // B — plain-language summary
+    if(couplings[i].length){
+      const parts=couplings[i].slice().sort((a,b)=>a.j-b.j).map(c=>'<b>P'+(c.j+1)+'</b> the '+(c.sign===1?'same':'opposite')+' way');
+      card.appendChild(el('p','lb-sentence','Moving <b>P'+(i+1)+'</b> also moves '+parts.join(', ')+'.'));
+    }
+
     box.appendChild(card);
   }
+  saveLocal();
 }
 
 /* ---------- solver (rigid coupling) ---------- */
@@ -656,7 +700,12 @@ function renderPlayer(){
     const m=meta.m;
     const dir=m.delta>0?'right':'left';
     const n=Math.abs(m.delta);
-    const glyph=m.delta>0?'→':'←';
+    const pinRight=m.delta>0;
+    const pinArr=pinRight?'→':'←', plateArr=pinRight?'←':'→';
+    const ppVars=pinRight
+      ?'--pin-x:11px;--plate-x:-5px;--pin-nudge:5px;--plate-nudge:-5px'
+      :'--pin-x:-11px;--plate-x:5px;--pin-nudge:-5px;--plate-nudge:5px';
+    const ppCls=pinRight?'pp':'pp lft';
     let html=''+
       '<div class="move-hero">'+
         '<div class="plate-badge">P'+(m.plate+1)+'</div>'+
@@ -664,7 +713,11 @@ function renderPlayer(){
           '<div class="move-headline"><b>'+dir.charAt(0).toUpperCase()+dir.slice(1)+'</b> by '+n+'</div>'+
           '<div class="move-sub">Plate '+(m.plate+1)+' · '+n+' '+(n===1?'hole':'holes')+'</div>'+
         '</div>'+
-        '<div class="dir-glyph '+(m.delta>0?'r':'l')+'">'+glyph+'</div>'+
+        '<div class="'+ppCls+'" style="'+ppVars+'" aria-hidden="true">'+
+          '<div class="pp-row pp-top"><span class="pp-arr">'+plateArr+'</span>plate</div>'+
+          '<div class="pp-track"><div class="pp-plate"><span class="pp-pin"></span></div></div>'+
+          '<div class="pp-row pp-bot">pin<span class="pp-arr">'+pinArr+'</span></div>'+
+        '</div>'+
       '</div>';
     const drag=describeDrag(m.plate,m.delta,meta.before);
     if(drag) html+='<div class="move-drag">'+drag+'</div>';
@@ -675,7 +728,7 @@ function renderPlayer(){
   for(let k=1;k<=total;k++){
     const seg=el('button','pseg'+(pIndex>=k?' done':'')+(pIndex===k?' cur':''));
     seg.title='Move '+k+' of '+total;
-    seg.onclick=()=>{ pIndex=k; renderPlayer(); };
+    seg.onclick=()=>{ stopPlay(); pIndex=k; renderPlayer(); };
     pbar.appendChild(seg);
   }
 
@@ -702,7 +755,53 @@ function runSolve(){
   if(res.status==='already'){ errBox.innerHTML='<p class="err" style="color:var(--accent2)">✓ All pins are already at #4 — lock open.</p>'; return; }
   if(res.status==='unsolvable'){ errBox.innerHTML='<p class="err">✕ No solution: with these links the pins can’t all reach #4 without running past an edge. Check the links and directions.</p>'; return; }
   if(res.status==='toobig'){ errBox.innerHTML='<p class="err">⚠ Too many plates for the step-by-step search. Keep it to 8 or fewer.</p>'; return; }
-  sol=buildSolution(res.path); pIndex=0; renderPlayer(); show('screen3');
+  stopPlay(); sol=buildSolution(res.path); pIndex=0; renderPlayer(); show('screen3');
+}
+
+/* ---------- save / share lock state ---------- */
+const LS_KEY='ml_lock_v1';
+function b64u(s){return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
+function unb64u(s){s=s.replace(/-/g,'+').replace(/_/g,'/');return atob(s);}
+function serialize(){return b64u(JSON.stringify({n:N,p:positions,c:couplings.map(r=>r.map(c=>[c.j,c.sign]))}));}
+function deserialize(str){try{return JSON.parse(unb64u(str));}catch(e){return null;}}
+function applyState(o){
+  if(!o||!o.n)return false;
+  N=Math.max(3,Math.min(7,o.n|0));
+  positions=[]; couplings=[];
+  for(let i=0;i<N;i++){
+    const p=o.p&&o.p[i]; positions[i]=(p>=1&&p<=HOLES)?p:TARGET;
+    couplings[i]=[];
+    const cs=o.c&&o.c[i];
+    if(Array.isArray(cs)) for(const c of cs){ const j=Array.isArray(c)?c[0]:c.j, sg=Array.isArray(c)?c[1]:c.sign;
+      if(j>=0&&j<N&&j!==i&&!couplings[i].some(x=>x.j===j)) couplings[i].push({j:j,sign:sg===-1?-1:1}); }
+  }
+  return true;
+}
+function saveLocal(){ try{ localStorage.setItem(LS_KEY,serialize()); }catch(e){} }
+function loadInitial(){
+  const m=(location.hash||'').match(/lock=([A-Za-z0-9_\-]+)/);
+  if(m){ const o=deserialize(m[1]); if(o&&applyState(o)) return true; }
+  try{ const ls=localStorage.getItem(LS_KEY); if(ls){ const o=deserialize(ls); if(o&&applyState(o)) return true; } }catch(e){}
+  return false;
+}
+function toast(msg){ const t=document.getElementById('toast'); if(!t)return; t.textContent=msg; t.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('show'),2200); }
+function copyText(txt,ok){ if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(()=>toast(ok)).catch(()=>window.prompt('Copy:',txt)); } else window.prompt('Copy:',txt); }
+function shareLock(){ copyText(location.origin+location.pathname+'#lock='+serialize(),'Link copied — share your lock!'); }
+
+/* ---------- solution autoplay + copy ---------- */
+let playTimer=null;
+const PLAY_SVG='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+const PAUSE_SVG='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
+function updatePlayBtn(){ const b=document.getElementById('playBtn'); if(!b)return; b.innerHTML=(playTimer!=null?PAUSE_SVG+'<span>Pause</span>':PLAY_SVG+'<span>Play</span>'); }
+function stopPlay(){ if(playTimer){clearInterval(playTimer);playTimer=null;} updatePlayBtn(); }
+function startPlay(){ if(!sol)return; if(pIndex>=sol.path.length){pIndex=0;renderPlayer();} playTimer=setInterval(()=>{ if(pIndex<sol.path.length){pIndex++;renderPlayer();} if(pIndex>=sol.path.length){stopPlay();} },1500); updatePlayBtn(); }
+function togglePlay(){ playTimer!=null?stopPlay():startPlay(); }
+function solutionText(){
+  const total=sol.path.length, out=["Master's Lockpick — solution ("+total+" "+plural(total)+")"];
+  sol.path.forEach((m,idx)=>{ const before=sol.metas[idx+1].before, dir=m.delta>0?'right':'left', n=Math.abs(m.delta);
+    let line=(idx+1)+'. Plate '+(m.plate+1)+' → '+dir+' by '+n; const drag=describeDrag(m.plate,m.delta,before); if(drag) line+=' ('+drag+')'; out.push(line); });
+  out.push('Solver: '+location.origin+location.pathname);
+  return out.join('\n');
 }
 
 /* ---------- controls ---------- */
@@ -719,21 +818,34 @@ document.getElementById('clearLinks').onclick=()=>{ for(let i=0;i<N;i++) couplin
 document.getElementById('toStep2').onclick=()=>{ renderCouplings(); show('screen2'); };
 document.getElementById('backTo1').onclick=()=>{ renderPositions(); show('screen1'); };
 document.getElementById('doSolve').onclick=runSolve;
-document.getElementById('pPrev').onclick=()=>{ if(pIndex>0){pIndex--; renderPlayer();} };
-document.getElementById('pNext').onclick=()=>{ if(sol&&pIndex<sol.path.length){pIndex++; renderPlayer();} };
-document.getElementById('restart').onclick=()=>{ document.getElementById('solveError').innerHTML=''; show('screen1'); };
+document.getElementById('pPrev').onclick=()=>{ stopPlay(); if(pIndex>0){pIndex--; renderPlayer();} };
+document.getElementById('pNext').onclick=()=>{ stopPlay(); if(sol&&pIndex<sol.path.length){pIndex++; renderPlayer();} };
+document.getElementById('restart').onclick=()=>{ stopPlay(); document.getElementById('solveError').innerHTML=''; show('screen1'); };
+document.getElementById('shareLock').onclick=shareLock;
+document.getElementById('shareBtn').onclick=shareLock;
+document.getElementById('playBtn').onclick=togglePlay;
+document.getElementById('copyBtn').onclick=()=>copyText(solutionText(),'Solution copied!');
 document.addEventListener('keydown',e=>{
   if(!document.getElementById('screen3').classList.contains('active'))return;
   if(e.key==='ArrowRight') document.getElementById('pNext').click();
   if(e.key==='ArrowLeft') document.getElementById('pPrev').click();
 });
+/* swipe left/right on the solution to step through moves */
+(function(){ let sx=null,sy=null; const sc=document.getElementById('screen3');
+  sc.addEventListener('touchstart',e=>{const t=e.changedTouches[0];sx=t.clientX;sy=t.clientY;},{passive:true});
+  sc.addEventListener('touchend',e=>{ if(sx==null)return; const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy; sx=null;
+    if(Math.abs(dx)<45||Math.abs(dx)<Math.abs(dy))return;
+    (dx<0?document.getElementById('pNext'):document.getElementById('pPrev')).click(); },{passive:true});
+})();
 
-/* init + small demo wiring */
-initState(false);
-if(N>=2) couplings[0].push({j:1,sign:1});
-positions[0]=2; positions[1]=6; if(N>=3) positions[2]=5;
+/* init: restore shared/saved lock, else small demo */
+if(!loadInitial()){
+  initState(false);
+  couplings[0].push({j:1,sign:1});
+  positions[0]=2; positions[1]=6; positions[2]=5;
+}
 document.querySelectorAll('#plateChoice button').forEach(b=>b.classList.toggle('on',+b.dataset.n===N));
-renderPositions(); renderCouplings();
+renderPositions(); renderCouplings(); updatePlayBtn();
 </script>
 <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="art.osetrov" data-description="Support me on Buy me a coffee!" data-message="" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
 
